@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     center = Point(bot.x, bot.y)
     for i in range(0, 90):
-        draw(Square(center, 100-i, i*2))
+        draw(Square(center, 100-i, i*25))
     bot.penUp()
     bot.goto(0, 0)
 
