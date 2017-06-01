@@ -34,3 +34,9 @@ class TestPoint(object):
         p.rotate(90, other_point)
         assert_almost_equals(p.x, 1)
         assert_almost_equals(p.y, -1)
+
+    def test_comparison(self):
+        p1 = Point(0, 0)
+        p2 = Point(0, 0)
+        assert_equals(p1, p2)
+

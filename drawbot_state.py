@@ -43,7 +43,11 @@ class RawDrawBot(object):
         self.serial.write(g_code.encode())
 
     def set_feed_rate(self, feed_rate):
-        g_code = "G0F{0}\r\n".format(feed_rate)
+        g_code = "G0X0Y0F{0}\r\n".format(feed_rate)
+        self.serial.write(g_code.encode())
+
+    def pause(self, millis):
+        g_code = "G4P{0}\r\n".format(millis)
         self.serial.write(g_code.encode())
 
     def change_servo_angle(self, angle):

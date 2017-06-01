@@ -20,13 +20,20 @@ class DrawBot(object):
         self.bot = RawDrawBot(rdbf)
         self.x = 0.0
         self.y = 0.0
+        self.pen_state = "up"
         self.penUp()
 
     def penUp(self):
-        self.bot.change_servo_angle(self.config.pen_up_angle)
+        if self.pen_state != "up":
+            self.bot.change_servo_angle(self.config.pen_up_angle)
+            self.bot.pause(100000)
+            self.pen_state = "up"
 
     def penDown(self):
-        self.bot.change_servo_angle(self.config.pen_down_angle)
+        if self.pen_state != "down":
+            self.bot.change_servo_angle(self.config.pen_down_angle)
+            self.bot.pause(100000)
+            self.pen_state = "down"
 
     def home(self):
         self.goto(0, 0)

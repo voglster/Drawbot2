@@ -1,17 +1,17 @@
 from multiprocessing import freeze_support
 from time import sleep
-from drawing import Square, Point
-import math
+from drawing import Square, Point, image
 
 
 def draw(drawing):
-    bot.penUp()
     first = True
     for point in drawing.path():
-        bot.goto(point.x, point.y)
         if first:
-            bot.penDown()
+            if round(bot.x) != round(point.x) or round(bot.y) != round(point.y):
+                bot.penUp()
             first = False
+        bot.goto(point.x, point.y)
+        bot.penDown()
 
 
 def control_mode(bot):
@@ -56,6 +56,12 @@ def control_mode(bot):
         break
 
 
+def run_image():
+    img = image.getImage('C:\\Users\\jimmv\\Desktop\\eyes.jpg')
+    conf = image.setup(img)
+    return image.gcode_lines(img.pixels, conf)
+
+
 if __name__ == '__main__':
     freeze_support()
     from input import Pad
@@ -65,9 +71,11 @@ if __name__ == '__main__':
 
     control_mode(bot)
 
-    center = Point(bot.x, bot.y)
-    for i in range(0, 90):
-        draw(Square(center, 100-i, i*25))
+    center = Point(bot.x, bot.y).translate(Point(0, -100))
+    for line in run_image():
+        draw(line.translate(center))
+    #for i in range(0, 90):
+    #    draw(Square(center, 50-(i/2.0), i*3))
     bot.penUp()
     bot.goto(0, 0)
 
