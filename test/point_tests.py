@@ -35,8 +35,10 @@ class TestPoint(object):
         assert_almost_equals(p.x, 1)
         assert_almost_equals(p.y, -1)
 
-    def test_comparison(self):
+    def test_distance(self):
         p1 = Point(0, 0)
         p2 = Point(0, 0)
-        assert_equals(p1, p2)
+        distance = p1.distance(p2)
+
+        assert_equals(distance, 0)
 

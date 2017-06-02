@@ -7,4 +7,8 @@ class WShader(object):
         pass
 
     def path(self):
-        yield self.bounding_box.top_left_point
+        top_points = self.bounding_box.top_line.split_into_points(self.squiggle_count+1)
+        bottom_points = self.bounding_box.bottom_line.split_into_points(self.squiggle_count+2, False)
+        while True:
+            yield next(top_points)
+            yield next(bottom_points)

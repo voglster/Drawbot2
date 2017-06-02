@@ -1,4 +1,4 @@
-from math import cos, sin, radians
+from math import cos, sin, radians, sqrt
 import drawing.shaders
 
 
@@ -35,10 +35,13 @@ class Point(object):
     def copy(self):
         return Point(self.x, self.y)
 
+    def distance(self, other):
+        delta_x = self.x - other.x
+        delta_y = self.y - other.y
+        return sqrt(delta_x ** 2 + delta_y ** 2)
+
     def __eq__(self, other):
-        same_x = self.x == other.x
-        same_y = self.y == other.y
-        return same_x and same_y
+        return round(self.x, 7) == round(other.x, 7) and round(self.y, 7) == round(other.y, 7)
 
 
 def chain(iterable):
@@ -66,13 +69,7 @@ class Line(object):
         return self
 
     def split(self, count=2):
-        points = [self.start]
-        for i in range(1, count):
-            # http://www.dummies.com/education/math/trigonometry/how-to-divide-a-line-segment-into-multiple-parts/
-            x = self.start.x + (i/count)*(self.end.x - self.start.x)
-            y = self.start.y + (i/count)*(self.end.y - self.start.y)
-            points.append(Point(x, y))
-        points.append(self.end)
+        points = self.split_into_points(count+1)
         for p1, p2 in chain(points):
             yield Line(p1, p2)
 
@@ -93,12 +90,44 @@ class Line(object):
     def delta_y(self):
         return self.end.y - self.start.y
 
+    def __eq__(self, other):
+        first_points_match = self.start == other.start
+        second_points_match = self.end == other.end
+        return first_points_match and second_points_match
+
+    def split_into_points(self, count_of_points, include_ends=True):
+        count = count_of_points - 1
+        if include_ends:
+            yield self.start
+        for i in range(1, count):
+            # http://www.dummies.com/education/math/trigonometry/how-to-divide-a-line-segment-into-multiple-parts/
+            x = self.start.x + (i/count)*(self.end.x - self.start.x)
+            y = self.start.y + (i/count)*(self.end.y - self.start.y)
+            yield Point(x, y)
+        if include_ends:
+            yield self.end
+
+
+def get_set_dict(dictionary, key, factory):
+    if key not in dictionary:
+        dictionary[key] = factory()
+    return dictionary[key]
+
 
 class Square(object):
     def __init__(self, origin=None, size=1, angle=0):
         self.origin = origin or Point()
         self.size = size
         self.angle = angle
+        self._points = {}
+        self._bl = None
+        self._tl = None
+        self._point_lookup = {
+            "tl": self.top_left_point,
+            "tr": self.top_right_point,
+            "bl": self.bottom_left_point,
+            "br": self.bottom_right_point,
+        }
 
     def path(self):
         yield self.top_right_point
@@ -109,33 +138,37 @@ class Square(object):
 
     def get_point(self, point_desc):
         point_desc = str(point_desc).lower()
-        if point_desc == "tl":
-            return self.top_left_point
-        if point_desc == "tr":
-            return self.top_right_point
-        if point_desc == "bl":
-            return self.bottom_left_point
-        if point_desc == "br":
-            return self.bottom_right_point
+        return self._point_lookup[point_desc]
 
+    def _get_point(self, name, func):
+        return get_set_dict(self._points, name, func)
 
     @property
     def _unit_point(self):
-        return Point(self.size/2, self.size/2).rotate(self.angle)
+        return self._get_point("unit", lambda: Point(self.size/2, self.size/2).rotate(self.angle))
 
     @property
     def top_right_point(self):
-        return self._unit_point.translate(self.origin)
+        return self._get_point("tr", lambda: self._unit_point.copy().translate(self.origin))
 
     @property
     def bottom_right_point(self):
-        return self._unit_point.rotate(90).translate(self.origin)
+        return self._get_point("br", lambda: self._unit_point.copy().rotate(90).translate(self.origin))
 
     @property
     def bottom_left_point(self):
-        return self._unit_point.rotate(180).translate(self.origin)
+        return self._get_point("bl", lambda: self._unit_point.copy().rotate(180).translate(self.origin))
 
     @property
     def top_left_point(self):
-        return self._unit_point.rotate(270).translate(self.origin)
+        return self._get_point("tl", lambda: self._unit_point.copy().rotate(270).translate(self.origin))
+    
+    @property
+    def bottom_line(self):
+        self._bl = self._bl or Line(self.bottom_left_point, self.bottom_right_point)
+        return self._bl
 
+    @property
+    def top_line(self):
+        self._tl = self._tl or Line(self.top_left_point, self.top_right_point)
+        return self._tl
