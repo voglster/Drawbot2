@@ -1,5 +1,6 @@
 from nose.tools import *
-from drawing import Point, Square
+from drawing import Point
+from drawing.Square import Square
 from drawing.shaders import WShader
 
 

@@ -1,6 +1,7 @@
 from multiprocessing import freeze_support
 from time import sleep
-from drawing import Square, Point, image
+from drawing import Point, image
+from drawing.Square import Square
 
 
 def draw(drawing):

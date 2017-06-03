@@ -1,5 +1,6 @@
 from nose.tools import *
-from drawing import Point, Square, Line
+from drawing import Point, Line
+from drawing.Square import Square
 
 
 class TestSquare(object):
