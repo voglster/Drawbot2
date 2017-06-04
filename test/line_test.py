@@ -1,5 +1,6 @@
 from nose.tools import *
-from drawing import Point, Line
+from drawing.PointSetup import Point
+from drawing.Line import Line
 
 
 class TestLine(object):
@@ -36,21 +37,30 @@ class TestLine(object):
         assert_equals(count, 1)
         assert_equals(l, lines[0])
 
-    def test_split_points(self):
+    def test_as_points_into_3(self):
         p1 = Point()
         p2 = Point(1, 0)
         l = Line(p1, p2)
-        points = list(l.split_into_points(3))
+        points = list(l.as_points(3))
         assert_equals(len(points), 3)
         assert_equals(points[1], Point(0.5, 0))
         assert_equals(points[0], p1)
         assert_equals(points[2], p2)
 
-    def test_split_points_no_ends(self):
+    def test_as_points_into_2(self):
         p1 = Point()
         p2 = Point(1, 0)
         l = Line(p1, p2)
-        points = list(l.split_into_points(3, False))
+        points = list(l.as_points(2))
+        assert_equals(len(points), 2)
+        assert_equals(points[0], p1)
+        assert_equals(points[1], p2)
+
+    def test_as_points_into_1(self):
+        p1 = Point()
+        p2 = Point(1, 0)
+        l = Line(p1, p2)
+        points = list(l.as_points(1))
         assert_equals(len(points), 1)
         assert_equals(points[0], l.midpoint())
 

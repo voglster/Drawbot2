@@ -1,4 +1,5 @@
-from drawing import chain, Point
+from drawing.util import chain
+from drawing.PointSetup import Point
 
 
 class Line(object):
@@ -16,7 +17,7 @@ class Line(object):
         return self
 
     def split(self, count=2):
-        points = self.split_into_points(count+1)
+        points = self.as_points(count + 1)
         for p1, p2 in chain(points):
             yield Line(p1, p2)
 
@@ -42,14 +43,15 @@ class Line(object):
         second_points_match = self.end == other.end
         return first_points_match and second_points_match
 
-    def split_into_points(self, count_of_points, include_ends=True):
-        count = count_of_points - 1
-        if include_ends:
+    def as_points(self, count_of_points):
+        if count_of_points == 1:
+            yield self.midpoint()
+        else:
+            count = count_of_points - 1
             yield self.start
-        for i in range(1, count):
-            # http://www.dummies.com/education/math/trigonometry/how-to-divide-a-line-segment-into-multiple-parts/
-            x = self.start.x + (i/count)*(self.end.x - self.start.x)
-            y = self.start.y + (i/count)*(self.end.y - self.start.y)
-            yield Point(x, y)
-        if include_ends:
+            for i in range(1, count):
+                # http://www.dummies.com/education/math/trigonometry/how-to-divide-a-line-segment-into-multiple-parts/
+                x = self.start.x + (i/count)*(self.end.x - self.start.x)
+                y = self.start.y + (i/count)*(self.end.y - self.start.y)
+                yield Point(x, y)
             yield self.end

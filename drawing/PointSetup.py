@@ -41,3 +41,9 @@ class Point(object):
 
     def __eq__(self, other):
         return round(self.x, 7) == round(other.x, 7) and round(self.y, 7) == round(other.y, 7)
+
+    def __str__(self):
+        return f"Point({self.x},{self.y})"
+
+    def __repr__(self):
+        return self.__str__()

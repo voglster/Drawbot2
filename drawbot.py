@@ -30,10 +30,8 @@ class DrawBot(object):
             self.pen_state = "up"
 
     def penDown(self):
-        if self.pen_state != "down":
-            self.bot.change_servo_angle(self.config.pen_down_angle)
-            self.bot.pause(100000)
-            self.pen_state = "down"
+        self.bot.change_servo_angle(self.config.pen_down_angle)
+        self.pen_state = "down"
 
     def home(self):
         self.goto(0, 0)

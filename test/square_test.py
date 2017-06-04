@@ -1,5 +1,6 @@
 from nose.tools import *
-from drawing import Point, Line
+from drawing.PointSetup import Point
+from drawing.Line import Line
 from drawing.Square import Square
 
 

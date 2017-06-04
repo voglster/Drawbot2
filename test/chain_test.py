@@ -1,5 +1,5 @@
 from nose.tools import *
-from drawing import chain
+from drawing.util import chain
 
 
 def test_chain_groups_2_items():

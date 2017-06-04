@@ -1,6 +1,8 @@
 from PIL import Image, ImageEnhance
 import numpy as np
-from drawing import Point, Line
+from drawing.PointSetup import Point
+from drawing.Square import Square
+from drawing.shaders import WShader
 
 
 class DBImageConverter(object):
@@ -40,7 +42,6 @@ class DBImageConverter(object):
 def getImage(path):
     dbic = DBImageConverter(path)
     dbic.show()
-    #input("Waiting ctrl-c to abort")
     return dbic
 
 
@@ -49,10 +50,8 @@ def setup(dbic):
         pass
 
     conf = Conf()
-    conf.canvas_size = 200
+    conf.canvas_size = 300
     conf.pixel_size = 1.0 * conf.canvas_size / dbic.thumbsize
-    conf.vert_line_size = conf.pixel_size * 0.9
-    conf.vert_offset = (conf.pixel_size - conf.vert_line_size) / 2.0
     return conf
 
 
@@ -62,34 +61,23 @@ def lines(data, conf, shades=10.0):
     pixel = 255 - pixel  # invert the color 255 is now black and 0 is white
 
     pixel = int(pixel * (shades / 255.0))
+    pixel = pixel - 2
+    if pixel < 0:
+        pixel = 0
 
-    x = x * conf.pixel_size
-    y = y * conf.pixel_size
     if pixel:
-        increment = conf.pixel_size / pixel
+        x = x * conf.pixel_size
+        y = y * conf.pixel_size
 
-        lst = [i for i in range(0, pixel)]
-        if reverse:
-            lst = reversed(lst)
-        swap = False
-        start_point = None
+        center = Point(x + conf.pixel_size/2, y + conf.pixel_size/2)
+        bounding_box = Square(origin=center, size=conf.pixel_size)
 
-        for idx in lst:
-            start_point = start_point or Point(str(round(x + (idx * increment), 4)), str(round(y + conf.vert_offset, 4)))
-            end_point = Point(str(round(x + (idx * increment), 4)), str(round(y + conf.vert_offset + conf.vert_line_size, 4)))
-            if swap:
-                yield Line(start_point, end_point)
-                start_point = end_point
-            else:
-                yield Line(end_point, start_point)
-
-
+        return WShader(bounding_box=bounding_box, line_count=pixel, reverse=reverse, v_scale=0.8)
 
 
 def gcode_lines(pixels, conf):
     for i in pixels:
-        for g in lines(i, conf):
-            yield g
+        yield lines(i, conf, 8)
 
 
 

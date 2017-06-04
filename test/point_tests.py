@@ -1,5 +1,5 @@
 from nose.tools import *
-from drawing import Point
+from drawing.PointSetup import Point
 
 
 class TestPoint(object):

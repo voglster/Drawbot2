@@ -1,6 +1,6 @@
 from inputs import get_gamepad
 from time import sleep
-from multiprocessing import Value, Process, freeze_support
+from multiprocessing import Value, Process
 
 
 def first(iterable):

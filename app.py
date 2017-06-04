@@ -1,14 +1,20 @@
 from multiprocessing import freeze_support
 from time import sleep
-from drawing import Point, image
-from drawing.Square import Square
+from drawing.PointSetup import Point
+from drawing import image
 
 
-def draw(drawing):
+def draw(drawing, center=Point()):
+    if not drawing:
+        return
     first = True
     for point in drawing.path():
+        if not point:
+            continue
+        point = point.copy()
+        point.translate(center)
         if first:
-            if round(bot.x) != round(point.x) or round(bot.y) != round(point.y):
+            if point.distance(bot) > 2:
                 bot.penUp()
             first = False
         bot.goto(point.x, point.y)
@@ -73,8 +79,8 @@ if __name__ == '__main__':
     control_mode(bot)
 
     center = Point(bot.x, bot.y).translate(Point(0, -100))
-    for line in run_image():
-        draw(line.translate(center))
+    for p in run_image():
+        draw(p, center)
     #for i in range(0, 90):
     #    draw(Square(center, 50-(i/2.0), i*3))
     bot.penUp()

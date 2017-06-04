@@ -1,4 +1,6 @@
-from drawing import Point, get_set_dict, Line
+from drawing.PointSetup import Point
+from drawing.Line import Line
+from drawing.util import get_set_dict
 
 
 class Square(object):
@@ -15,6 +17,8 @@ class Square(object):
             "bl": self.bottom_left_point,
             "br": self.bottom_right_point,
         }
+        self.mirror_x = False
+        self.mirror_y = False
 
     def path(self):
         yield self.top_right_point
@@ -59,3 +63,9 @@ class Square(object):
     def top_line(self):
         self._tl = self._tl or Line(self.top_left_point, self.top_right_point)
         return self._tl
+
+    def mirror(self, param):
+        if str(param).lower() == "x":
+            self.mirror_x = not self.mirror_x
+        if str(param).lower() == "y":
+            self.mirror_y = not self.mirror_y
