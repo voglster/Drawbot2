@@ -9,9 +9,7 @@ class WShader(object):
         self.v_scale = v_scale
 
     def path(self):
-        if self.line_count == 0:
-            yield None
-        else:
+        if self.line_count != 0:
             ends_on_top = self.line_count % 2 == 0
             if ends_on_top:
                 top_points = [p.copy() for p in self.bounding_box.top_line.as_points(self.line_count)]

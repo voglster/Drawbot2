@@ -13,7 +13,6 @@ class DrawBotConf(object):
 def read_line(ser, state):
     line = ser.readline().decode("ascii").strip() or ""
     state.input(line)
-    print(line)
     return line
 
 

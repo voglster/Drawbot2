@@ -64,7 +64,7 @@ def control_mode(bot):
 
 
 def run_image():
-    img = image.getImage('C:\\Users\\jimmv\\Desktop\\eyes.jpg')
+    img = image.getImage('C:\\Users\\jimmv\\Desktop\\mountain.jpeg')
     conf = image.setup(img)
     return image.gcode_lines(img.pixels, conf)
 
@@ -77,10 +77,17 @@ if __name__ == '__main__':
     bot = DrawBot()
 
     control_mode(bot)
+    print("Starting print")
 
-    center = Point(bot.x, bot.y).translate(Point(0, -100))
-    for p in run_image():
+    center = Point(bot.x, bot.y)
+    from svg2gcode.svg2gcode import generate_paths
+    with open('C:\\Users\\jimmv\\Desktop\\Dornier.svg', 'r') as file:
+        data = file.read()
+    for p in generate_paths(data):
         draw(p, center)
+
+    # for p in run_image():
+    #     draw(p, center)
     #for i in range(0, 90):
     #    draw(Square(center, 50-(i/2.0), i*3))
     bot.penUp()
